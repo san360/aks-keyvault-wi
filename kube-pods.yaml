@@ -1,0 +1,65 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: busybox-secrets-store-inline
+  namespace: accessapp1
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: accessapp1
+  containers:
+  - name: busybox
+    image: registry.k8s.io/e2e-test-images/busybox:1.29-4
+    command:
+      - "/bin/sleep"
+      - "10000"
+    env:
+    - name: ExampleSecret
+      valueFrom:
+        secretKeyRef:
+          name: accessapp1-secret
+          key: ExampleSecret
+    volumeMounts:
+    - name: secrets-store01-inline
+      mountPath: "/mnt/secrets-store"
+      readOnly: true
+  volumes:
+    - name: secrets-store01-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "azure-kvname-wi"
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: busybox-secrets-store-inline-wi
+  namespace: accessapp2
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: "accessapp2"
+  containers:
+    - name: busybox
+      image: registry.k8s.io/e2e-test-images/busybox:1.29-4
+      command:
+        - "/bin/sleep"
+        - "10000"
+      env:
+      - name: ExampleSecret
+        valueFrom:
+          secretKeyRef:
+            name: accessapp2-secret
+            key: ExampleSecret
+      volumeMounts:
+      - name: secrets-store01-inline
+        mountPath: "/mnt/secrets-store"
+        readOnly: true
+  volumes:
+    - name: secrets-store01-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "azure-kvname-wi"
