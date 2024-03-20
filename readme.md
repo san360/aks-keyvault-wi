@@ -86,3 +86,18 @@ az role assignment create --role "Key Vault Secrets User" --assignee $accessapp2
 az keyvault secret set --vault-name accessapp1vault -n ExampleSecret --value MyAKSExampleSecret
 az keyvault secret set --vault-name accessapp2vault -n ExampleSecret --value MyAKSExampleSecret
 ```
+
+### Deploy Kubernetes service account yaml
+```
+kubectl apply -f kube-service-account.yaml
+```
+
+### Deploy Kubernetes secret provider yaml
+```
+kubectl apply -f secret-prodvider.yaml
+```
+
+### Deploy Kubernetes pod yaml
+```
+ kubectl apply -f kube-pods.yaml
+```
